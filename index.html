@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Coconut Oracle - Digital Decision Helper</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Ambient Tropical Leaves & Sun in CSS/SVG -->
+  <div class="tropical-bg-decor top-left">🌴</div>
+  <div class="tropical-bg-decor top-right">🌺</div>
+
+  <main class="oracle-app" id="appContainer">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-badge">TROPICAL DIVINATION</div>
+      <h1 class="app-title">Coconut Oracle</h1>
+      <p class="app-subtitle">Crack open the mystical coconut to resolve your dilemma!</p>
+    </header>
+
+    <!-- Tally Bar -->
+    <section class="tally-bar" aria-label="Oracle Statistics">
+      <div class="tally-item blessed-tally">
+        <span class="tally-icon">✨</span>
+        <span class="tally-label">Blessed</span>
+        <span class="tally-count" id="blessedCount">0</span>
+      </div>
+      <div class="tally-item cursed-tally">
+        <span class="tally-icon">🪰</span>
+        <span class="tally-label">Cursed</span>
+        <span class="tally-count" id="cursedCount">0</span>
+      </div>
+      <div class="tally-item jackpot-tally">
+        <span class="tally-icon">🍫</span>
+        <span class="tally-label">Jackpot</span>
+        <span class="tally-count" id="jackpotCount">0</span>
+      </div>
+    </section>
+
+    <!-- Dilemma Input Section -->
+    <section class="input-section" id="inputSection">
+      <label for="dilemmaInput" class="input-label">What's your dilemma?</label>
+      <div class="input-wrap">
+        <input 
+          type="text" 
+          id="dilemmaInput" 
+          placeholder="e.g., Should I order pizza tonight?" 
+          maxlength="120"
+          autocomplete="off"
+        >
+        <button type="button" id="clearInputBtn" class="clear-btn" aria-label="Clear input" style="display: none;">✕</button>
+      </div>
+    </section>
+
+    <!-- Coconut Ritual Stage -->
+    <section class="ritual-stage" id="ritualStage">
+      <!-- Animated Hammer Tool -->
+      <div class="hammer" id="hammer">
+        <svg viewBox="0 0 100 120" width="80" height="96">
+          <!-- Wooden handle -->
+          <rect x="42" y="30" width="16" height="85" rx="5" fill="#8d5b32" stroke="#5d3a1f" stroke-width="3"/>
+          <path d="M42 65 L58 65 M42 80 L58 80 M42 95 L58 95" stroke="#5d3a1f" stroke-width="2"/>
+          <!-- Stone/Iron head -->
+          <rect x="15" y="10" width="70" height="32" rx="7" fill="#64748b" stroke="#334155" stroke-width="3"/>
+          <rect x="20" y="14" width="60" height="8" rx="3" fill="#94a3b8"/>
+        </svg>
+      </div>
+
+      <!-- Coconut Container with Interactive States -->
+      <div class="coconut-wrapper" id="coconutWrapper" role="button" tabindex="0" aria-label="Tap to crack coconut">
+        <!-- Whole Coconut (Idle / Shaking) -->
+        <div class="coconut-whole" id="coconutWhole">
+          <svg viewBox="0 0 200 200" width="200" height="200" class="coconut-svg">
+            <defs>
+              <radialGradient id="coconutGrad" cx="35%" cy="35%" r="65%">
+                <stop offset="0%" stop-color="#935b31"/>
+                <stop offset="60%" stop-color="#6e3d1c"/>
+                <stop offset="100%" stop-color="#46240d"/>
+              </radialGradient>
+              <filter id="c-shadow" x="-10%" y="-10%" width="130%" height="130%">
+                <feDropShadow dx="0" dy="12" stdDeviation="10" flood-opacity="0.35"/>
+              </filter>
+            </defs>
+            <!-- Shadow underneath -->
+            <ellipse cx="100" cy="180" rx="65" ry="14" fill="rgba(0,0,0,0.22)"/>
+            <!-- Coconut Husk Shell -->
+            <ellipse cx="100" cy="100" rx="80" ry="86" fill="url(#coconutGrad)" filter="url(#c-shadow)"/>
+            <!-- Texture Fibers / Hatching -->
+            <path d="M50 70 Q60 110 55 140" stroke="#46240d" stroke-width="3" stroke-linecap="round" fill="none"/>
+            <path d="M148 65 Q140 105 145 135" stroke="#46240d" stroke-width="3" stroke-linecap="round" fill="none"/>
+            <path d="M80 40 Q85 75 75 110" stroke="#46240d" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            <path d="M120 45 Q115 80 125 120" stroke="#46240d" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            <!-- Cute Face / Coconut 3 Eyes -->
+            <circle cx="75" cy="85" r="9" fill="#301808"/>
+            <circle cx="125" cy="85" r="9" fill="#301808"/>
+            <circle cx="100" cy="115" r="8" fill="#301808"/>
+            <!-- Cute Eye Sparkles -->
+            <circle cx="78" cy="83" r="3" fill="#ffffff"/>
+            <circle cx="128" cy="83" r="3" fill="#ffffff"/>
+            <!-- Cute Rosy Cheeks -->
+            <ellipse cx="55" cy="100" rx="10" ry="6" fill="rgba(255,130,130,0.3)"/>
+            <ellipse cx="145" cy="100" rx="10" ry="6" fill="rgba(255,130,130,0.3)"/>
+          </svg>
+        </div>
+
+        <!-- Split Outcome 1: BLESSED (Clean Split, White Meat, Golden Glow) -->
+        <div class="coconut-split-blessed outcome-art hidden" id="artBlessed">
+          <div class="halves-wrap">
+            <!-- Left Half -->
+            <div class="half-shell left-half blessed-left">
+              <svg viewBox="0 0 100 170" width="95" height="160">
+                <!-- Brown outer -->
+                <path d="M90 10 Q20 50 20 90 Q20 145 90 160 Z" fill="#6e3d1c" stroke="#46240d" stroke-width="4"/>
+                <!-- White inner meat -->
+                <path d="M85 20 Q32 55 32 90 Q32 135 85 150 Z" fill="#ffffff" filter="drop-shadow(0 0 6px #ffe699)"/>
+                <!-- Hollow center -->
+                <path d="M85 35 Q48 65 48 90 Q48 120 85 135 Z" fill="#f5eedc"/>
+              </svg>
+            </div>
+            <!-- Right Half -->
+            <div class="half-shell right-half blessed-right">
+              <svg viewBox="0 0 100 170" width="95" height="160">
+                <!-- Brown outer -->
+                <path d="M10 10 Q80 50 80 90 Q80 145 10 160 Z" fill="#6e3d1c" stroke="#46240d" stroke-width="4"/>
+                <!-- White inner meat -->
+                <path d="M15 20 Q68 55 68 90 Q68 135 15 150 Z" fill="#ffffff" filter="drop-shadow(0 0 6px #ffe699)"/>
+                <!-- Hollow center -->
+                <path d="M15 35 Q52 65 52 90 Q52 120 15 135 Z" fill="#f5eedc"/>
+              </svg>
+            </div>
+          </div>
+          <!-- Golden Sparkles Container -->
+          <div class="blessed-sparkles" id="blessedSparkles">
+            <span class="sparkle sp-1">✨</span>
+            <span class="sparkle sp-2">⭐</span>
+            <span class="sparkle sp-3">✨</span>
+            <span class="sparkle sp-4">🌟</span>
+            <span class="sparkle sp-5">✨</span>
+          </div>
+        </div>
+
+        <!-- Split Outcome 2: CURSED (Rotten Gray-Green, Buzzing Flies, Stink Fumes) -->
+        <div class="coconut-split-cursed outcome-art hidden" id="artCursed">
+          <div class="halves-wrap rotten-halves">
+            <div class="half-shell left-half cursed-left">
+              <svg viewBox="0 0 100 170" width="95" height="160">
+                <path d="M90 10 Q20 50 20 90 Q20 145 90 160 Z" fill="#4a3b32" stroke="#2c221c" stroke-width="4"/>
+                <path d="M85 20 Q32 55 32 90 Q32 135 85 150 Z" fill="#586d49"/>
+                <path d="M85 35 Q48 65 48 90 Q48 120 85 135 Z" fill="#3c4a30"/>
+                <!-- Mold spots -->
+                <circle cx="60" cy="80" r="8" fill="#24301d"/>
+                <circle cx="70" cy="115" r="6" fill="#1b2416"/>
+                <circle cx="45" cy="100" r="5" fill="#6a7d57"/>
+              </svg>
+            </div>
+            <div class="half-shell right-half cursed-right">
+              <svg viewBox="0 0 100 170" width="95" height="160">
+                <path d="M10 10 Q80 50 80 90 Q80 145 10 160 Z" fill="#4a3b32" stroke="#2c221c" stroke-width="4"/>
+                <path d="M15 20 Q68 55 68 90 Q68 135 15 150 Z" fill="#586d49"/>
+                <path d="M15 35 Q52 65 52 90 Q52 120 15 135 Z" fill="#3c4a30"/>
+                <!-- Mold spots -->
+                <circle cx="40" cy="75" r="7" fill="#24301d"/>
+                <circle cx="30" cy="110" r="5" fill="#1b2416"/>
+                <circle cx="55" cy="95" r="6" fill="#6a7d57"/>
+              </svg>
+            </div>
+          </div>
+          <!-- Stink waves & Flies -->
+          <div class="stink-cloud">
+            <div class="stink-line s1">~</div>
+            <div class="stink-line s2">~</div>
+            <div class="stink-line s3">~</div>
+            <div class="fly fly-1">🪰</div>
+            <div class="fly fly-2">🪰</div>
+            <div class="fly fly-3">🪰</div>
+          </div>
+        </div>
+
+        <!-- Split Outcome 3: JACKPOT (Melted Chocolate, Gold Coins, Confetti) -->
+        <div class="coconut-split-jackpot outcome-art hidden" id="artJackpot">
+          <div class="halves-wrap jackpot-halves">
+            <div class="half-shell left-half jackpot-left">
+              <svg viewBox="0 0 100 170" width="95" height="160">
+                <path d="M90 10 Q20 50 20 90 Q20 145 90 160 Z" fill="#6e3d1c" stroke="#46240d" stroke-width="4"/>
+                <!-- Glossy Rich Chocolate interior -->
+                <path d="M85 20 Q32 55 32 90 Q32 135 85 150 Z" fill="#4a2511"/>
+                <path d="M85 30 Q45 60 45 90 Q45 125 85 140 Z" fill="#2e1407"/>
+                <ellipse cx="65" cy="70" rx="8" ry="16" fill="#6d391b" opacity="0.7"/>
+              </svg>
+            </div>
+            <div class="half-shell right-half jackpot-right">
+              <svg viewBox="0 0 100 170" width="95" height="160">
+                <path d="M10 10 Q80 50 80 90 Q80 145 10 160 Z" fill="#6e3d1c" stroke="#46240d" stroke-width="4"/>
+                <path d="M15 20 Q68 55 68 90 Q68 135 15 150 Z" fill="#4a2511"/>
+                <path d="M15 30 Q55 60 55 90 Q55 125 15 140 Z" fill="#2e1407"/>
+                <ellipse cx="35" cy="70" rx="8" ry="16" fill="#6d391b" opacity="0.7"/>
+              </svg>
+            </div>
+            <!-- Dripping chocolate dollop -->
+            <div class="choco-overflow">🍫</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Button Area -->
+      <div class="action-btn-area" id="actionBtnArea">
+        <button id="smashBtn" class="smash-button" disabled>
+          <span class="btn-icon">🔨</span>
+          <span class="btn-text">SMASH!</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Result Banner (Hidden during dilemma entry) -->
+    <section class="result-card hidden" id="resultCard" aria-live="polite">
+      <div class="result-dilemma-quote" id="resultQuote">"Should I buy pizza?"</div>
+      <div class="result-badge" id="resultBadge">BLESSED</div>
+      <h2 class="result-message" id="resultMessage">Blessed! The universe says GO FOR IT.</h2>
+      
+      <button id="resetBtn" class="reset-button">
+        <span>🥥</span> Smash Another Coconut
+      </button>
+    </section>
+
+    <!-- History Log of Last 5 Decisions -->
+    <section class="history-section" id="historySection">
+      <h3 class="history-title">Recent Fortunes (Last 5)</h3>
+      <ul class="history-list" id="historyList">
+        <li class="history-empty">No coconuts cracked yet. Your destiny awaits!</li>
+      </ul>
+    </section>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>🌴 Just for fun &bull; Not real advice &bull; Trust your gut!</p>
+    </footer>
+  </main>
+
+  <!-- Coin/Confetti Rain Container -->
+  <div id="particleRain" class="particle-rain-container"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
